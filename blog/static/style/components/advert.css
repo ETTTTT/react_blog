@@ -1,0 +1,10 @@
+
+.adv{
+    margin-top: .5rem;
+}
+
+.adv div{
+    border-radius: .3rem;
+    margin-bottom: .2rem;
+    overflow: hidden;
+}
