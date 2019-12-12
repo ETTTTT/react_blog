@@ -2,24 +2,23 @@ import React from 'react'
 import Head from 'next/head'
 import axios from 'axios';
 import {Row, Col , Icon ,Breadcrumb, Affix} from 'antd'
-import MarkNav from 'markdown-navbar';
 import 'markdown-navbar/dist/navbar.css';
-
 import Header from '../components/Header'
 import Author from '../components/Author'
 import Advert from '../components/Advert'
 import Footer from '../components/Footer'
 import '../static/style/pages/detailed.css'
-
 import marked from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai-sublime.css'
-
 import Tocify from '../components/tocify.tsx'
+
+import servicePath from '../config/apiUrl'
+
+
 
 const Detailed = (props) => {
   const tocify = new Tocify()
-  console.log(tocify)
   const renderer = new marked.Renderer()
   // renderer.heading = (text, level, raw) => {
   //   const anchor = tocify.add(text, level)
@@ -63,20 +62,20 @@ let html = marked(props.article_content)
                   <div className="bread-div">
                     <Breadcrumb>
                       <Breadcrumb.Item><a href="/">首页</a></Breadcrumb.Item>
-                      <Breadcrumb.Item>视频列表</Breadcrumb.Item>
-                      <Breadcrumb.Item>xxxx</Breadcrumb.Item>
+                      <Breadcrumb.Item>{props.typeName}</Breadcrumb.Item>
+                      <Breadcrumb.Item>{props.title}</Breadcrumb.Item>
                     </Breadcrumb>
                   </div>
 
                 <div>
                     <div className="detailed-title">
-                    xxx
+                    {props.title}
                     </div>
                 
                     <div className="list-icon center">
-                      <span><Icon type="calendar" /> 2019-06-28</span>
-                      <span><Icon type="folder" /> 视频教程</span>
-                      <span><Icon type="fire" /> 5498人</span>
+                      <span><Icon type="calendar" /> {props.addTime}</span>
+                      <span><Icon type="folder" /> {props.typeName}</span>
+                      <span><Icon type="fire" /> {props.view_count}人</span>
                     </div>
                   
                     <div className="detailed-content" 
@@ -107,11 +106,9 @@ let html = marked(props.article_content)
 
 
 Detailed.getInitialProps = async context => {
-    console.log(context)
     let id = context.query.id
     const promise = new Promise((resolve, reject) => {
-      axios('http://127.0.0.1:7001/default/getArticleById/' +id).then(res => {
-        console.log(res)
+      axios(servicePath.getArticleById +id).then(res => {
         resolve(res.data.data[0])
       })
     })

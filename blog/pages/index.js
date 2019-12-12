@@ -8,9 +8,29 @@ import Author from '../components/Author';
 import Advert from '../components/Advert';
 import Footer from '../components/Footer';
 import '../static/style/pages/index.css';
+import servicePath from '../config/apiUrl'
+import marked from 'marked'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/monokai-sublime.css'
+
 
 const Home = (list) => {
     const [mylist, setMylist] = useState(list.data);
+
+    const renderer = new marked.Renderer()
+    marked.setOptions({
+        renderer: renderer,
+        gfm: true, // 启动类似github的marked
+        pedantic: false, // true 完全不容错， false:不符合marked的时候 会自动改正
+        sanitize: false, // 忽略html标签，如果有iframe直接回忽略
+        tables: true, // 是否允许可以输出表格，样式是github的样式。如果这个为true，gfm也必须为true
+        breaks: false, // 是否支持github的换行符合 为true的时候gfm也必须为true
+        smartLists: true, // 让列表样式好看一点
+        highlight: (code) => { // 如何让传的代码高亮
+          return hljs.highlightAuto(code).value
+        }
+    })
+    
     return (
         <div>
             <Head>
@@ -23,7 +43,6 @@ const Home = (list) => {
                         <div className="bread-div">
                             <Breadcrumb>
                                 <Breadcrumb.Item>首页</Breadcrumb.Item>
-                                <Breadcrumb.Item><a href="/list">视频列表</a></Breadcrumb.Item>
                             </Breadcrumb>
                         </div>
                         <List
@@ -40,9 +59,11 @@ const Home = (list) => {
                                     <div className="list-icon">
                                         <span><Icon type="calendar" /> {item.addTime}</span>
                                         <span><Icon type="folder" /> {item.typeName}</span>
-                                        <span><Icon type="fire" /> {item.view_count}</span>
+                                        <span><Icon type="fire" /> {item.view_count}人</span>
                                     </div>
-                                    <div className="list-context">{item.introduce}</div>  
+                                    <div className="list-context"
+                                    dangerouslySetInnerHTML={{__html: marked(item.introduce)}}
+                                    ></div>  
                                 </List.Item>
                             )}
                         />    
@@ -60,8 +81,7 @@ const Home = (list) => {
 
 Home.getInitialProps = async () => {
   const promise = new Promise((resolve, reject) => {
-    axios('http://127.0.0.1:7001/default/getArticleList').then((res) => {
-      console.log('--------------->', res.data)
+    axios(servicePath.getArticleList).then((res) => {
       resolve(res.data)
     })
   })
