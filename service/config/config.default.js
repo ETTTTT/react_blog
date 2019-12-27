@@ -43,13 +43,14 @@ module.exports = appInfo => {
   };
 
   config.security = {
-    scrf: {
-      enable:false,
+    csrf: {
+      enable:false, // 关闭检测
     },
-    domainWhiteList:['*'],
+    domainWhiteList:['*'], // 白名单
   };
   config.cors = {
-    origin:'*',
+    origin:'http://localhost:3000',
+    credentials: true, // 允许cookie可以跨域
     allowMethods:'GET,HEAD,PUT,POST,UPDATE,DELETE,PATCH,OPTIONS',
   }
   return {

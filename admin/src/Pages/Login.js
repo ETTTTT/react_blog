@@ -1,19 +1,51 @@
 import React, {useState}from 'react';
-import {Card, Input, Icon, Button, Spin} from 'antd'
+import {Card, Input, Icon, Button, Spin, message} from 'antd'
 
 import 'antd/dist/antd.css'
 import '../static/css/Login.css'
+import servicePath from '../config/apiUrl'
+import axios from 'axios';
 
-function Login() {
+function Login(props) {
     const [userName, setUserName] = useState('')
     const [password, setpassword] = useState('')
     const [isLoading, setisLoading] = useState(false)
-
     const checkLogin = () => {
         setisLoading(true)
-        setTimeout(()=>{
+        if (!userName) {
+            message.error('用户名不能为空')
+            setTimeout(() => {
+                setisLoading(false)
+            }, 500)
+            return false
+        } else if(!password) {
+            message.error('密码不能为空')
+            setTimeout(() => {
+                setisLoading(false)
+            }, 500)
+            return false
+        }
+        let dataProps = {
+            userName,
+            password
+        }
+        axios({
+            method: 'POST',
+            url: servicePath.checkLogin,
+            data: dataProps,
+            withCredentials: true  // 共享session
+        }).then(res => {
             setisLoading(false)
-        }, 1000)
+            if(res.data.data === '登录成功') {
+                localStorage.setItem('openId', res.data.openId)
+                // 跳转
+                props.history.push('/index')
+            } else {
+                message.error('用户名密码错误')
+            }
+        }).catch(() => {
+            setisLoading(false)
+        })
     }
     return(
         <div className="login-div">
