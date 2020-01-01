@@ -45,6 +45,7 @@ function Login(props) {
             }
         }).catch(() => {
             setisLoading(false)
+            message.error('登陆失败')
         })
     }
     return(
